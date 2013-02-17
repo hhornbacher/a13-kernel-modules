@@ -3,7 +3,7 @@
     <type>org.netbeans.modules.cnd.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>sunxi-w1</name>
+            <name>k_modules</name>
             <c-extensions>c</c-extensions>
             <cpp-extensions/>
             <header-extensions>h</header-extensions>
@@ -11,8 +11,8 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>.</sourceRootElem>
-                <sourceRootElem>../../kernel/linux-sunxi-sunxi-3.0/include</sourceRootElem>
-                <sourceRootElem>../../kernel/linux-sunxi-sunxi-3.0/arch/arm/mach-sun5i/include</sourceRootElem>
+                <sourceRootElem>../kernel/src/arch/arm/mach-sun5i/include</sourceRootElem>
+                <sourceRootElem>../kernel/linux-sunxi-sunxi-3.0/include</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
