@@ -4366,10 +4366,17 @@
     </df>
     <df name="k_modules" root=".">
       <df name="mod-io">
+        <df name=".tmp_versions">
+          <in>mod-io.mod</in>
+        </df>
         <in>mod-io.c</in>
         <in>mod-io.h</in>
+        <in>mod-io.mod.c</in>
       </df>
       <df name="sunxi-w1">
+        <df name=".tmp_versions">
+          <in>sunxi-w1.mod</in>
+        </df>
         <in>sunxi-w1.c</in>
         <in>sunxi-w1.h</in>
         <in>sunxi-w1.mod.c</in>
@@ -21016,7 +21023,7 @@
           </incDir>
         </cTool>
       </item>
-      <item path="sunxi-w1/sunxi-w1.mod.c" ex="false" tool="0" flavor2="2">
+      <item path="sunxi-w1/sunxi-w1.mod.c" ex="false" tool="0" flavor2="0">
         <cTool>
         </cTool>
       </item>
