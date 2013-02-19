@@ -15,8 +15,6 @@
 static unsigned gpio_handler1,gpio_handler2;
 static script_gpio_set_t info1,info2;
 
-static int 
-
 static void __exit gpio_test_exit_driver(void) {
     gpio_release(gpio_handler1, 0);
     gpio_release(gpio_handler2, 0);
@@ -58,7 +56,7 @@ static int __init gpio_test_init_driver(void) {
     }
     int data = gpio_read_one_pin_value(gpio_handler1, NULL);
     printk(KERN_INFO "%s: GPIO pin1 value: %d", __FUNCTION__, data );
-    int data = gpio_read_one_pin_value(gpio_handler2, NULL);
+    data = gpio_read_one_pin_value(gpio_handler2, NULL);
     printk(KERN_INFO "%s: GPIO pin2 value: %d", __FUNCTION__, data );
 
     printk(KERN_INFO "%s: Loaded GPIO test driver\n", __func__);

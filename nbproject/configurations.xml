@@ -243,6 +243,19 @@
         <df name="audit">
           <in>generic.h</in>
         </df>
+        <df name="aw">
+          <in>axp.h</in>
+          <in>axp20.h</in>
+        </df>
+        <df name="backlight">
+          <df name="class">
+            <in>device.h</in>
+          </df>
+          <df name="lcd">
+            <in>support.h</in>
+          </df>
+          <in>generic.h</in>
+        </df>
         <df name="base">
           <in>full.h</in>
           <in>small.h</in>
@@ -566,6 +579,25 @@
           </df>
           <in>fs.h</in>
         </df>
+        <df name="fb">
+          <df name="cfb">
+            <in>copyarea.h</in>
+            <in>fillrect.h</in>
+            <in>imageblit.h</in>
+          </df>
+          <df name="mode">
+            <in>helpers.h</in>
+          </df>
+          <df name="sunxi">
+            <df name="reserved">
+              <in>mem.h</in>
+            </df>
+            <in>lcd.h</in>
+            <in>ump.h</in>
+          </df>
+          <in>sunxi.h</in>
+          <in>tileblitting.h</in>
+        </df>
         <df name="file">
           <in>locking.h</in>
         </df>
@@ -576,6 +608,10 @@
             </df>
           </df>
         </df>
+        <df name="font">
+          <in>8x16.h</in>
+          <in>8x8.h</in>
+        </df>
         <df name="force">
           <df name="max">
             <in>zoneorder.h</in>
@@ -584,6 +620,14 @@
         <df name="frame">
           <in>pointer.h</in>
           <in>warn.h</in>
+        </df>
+        <df name="framebuffer">
+          <df name="console">
+            <df name="detect">
+              <in>primary.h</in>
+            </df>
+          </df>
+          <in>console.h</in>
         </df>
         <df name="fs">
           <df name="posix">
@@ -827,6 +871,11 @@
         <df name="ktime">
           <in>scalar.h</in>
         </df>
+        <df name="lcd">
+          <df name="class">
+            <in>device.h</in>
+          </df>
+        </df>
         <df name="leds">
           <df name="trigger">
             <df name="default">
@@ -852,6 +901,14 @@
         </df>
         <df name="lxt">
           <in>phy.h</in>
+        </df>
+        <df name="lychee">
+          <df name="fb">
+            <in>sun5i.h</in>
+          </df>
+          <df name="lcd">
+            <in>sun5i.h</in>
+          </df>
         </df>
         <df name="lzo">
           <in>compress.h</in>
@@ -974,6 +1031,7 @@
           <df name="activity">
             <in>stats.h</in>
           </df>
+          <in>ethernet.h</in>
           <in>ipip.h</in>
           <in>key.h</in>
           <in>ns.h</in>
@@ -1040,6 +1098,9 @@
         </df>
         <df name="pm">
           <in>sleep.h</in>
+        </df>
+        <df name="power">
+          <in>supply.h</in>
         </df>
         <df name="preempt">
           <in>rcu.h</in>
@@ -1263,6 +1324,11 @@
               <in>mem.h</in>
             </df>
           </df>
+          <df name="mali">
+            <df name="reserved">
+              <in>mem.h</in>
+            </df>
+          </df>
           <in>dbgreg.h</in>
         </df>
         <df name="suspend">
@@ -1344,6 +1410,9 @@
           <df name="helper">
             <in>path.h</in>
           </df>
+        </df>
+        <df name="ump">
+          <in>debug.h</in>
         </df>
         <df name="unix98">
           <in>ptys.h</in>
@@ -1581,6 +1650,9 @@
           <df name="decoder">
             <in>sun5i.h</in>
           </df>
+          <df name="output">
+            <in>control.h</in>
+          </df>
           <df name="sun5i">
             <in>cedar.h</in>
           </df>
@@ -1707,7 +1779,9 @@
         <in>epoll.h</in>
         <in>eventfd.h</in>
         <in>expert.h</in>
+        <in>fb.h</in>
         <in>flatmem.h</in>
+        <in>fonts.h</in>
         <in>freezer.h</in>
         <in>fscache.h</in>
         <in>fsnotify.h</in>
@@ -1732,6 +1806,8 @@
         <in>localversion.h</in>
         <in>lockd.h</in>
         <in>mac80211.h</in>
+        <in>mali.h</in>
+        <in>mali400.h</in>
         <in>md.h</in>
         <in>migration.h</in>
         <in>mii.h</in>
@@ -1786,6 +1862,7 @@
         <in>timerfd.h</in>
         <in>tmpfs.h</in>
         <in>uid16.h</in>
+        <in>ump.h</in>
         <in>unix.h</in>
         <in>usb.h</in>
         <in>vfp.h</in>
@@ -4395,9 +4472,18 @@
       </df>
     </df>
     <df name="k_modules" root=".">
+      <df name=".tmp_versions">
+        <in>gpio-test.mod</in>
+        <in>mod-io.mod</in>
+        <in>sunxi-w1.mod</in>
+      </df>
       <df name="gpio-test">
+        <df name=".tmp_versions">
+          <in>gpio-test.mod</in>
+        </df>
         <in>gpio-test.c</in>
         <in>gpio-test.h</in>
+        <in>gpio-test.mod.c</in>
       </df>
       <df name="mod-io">
         <df name=".tmp_versions">
@@ -4407,11 +4493,18 @@
         <in>mod-io.h</in>
         <in>mod-io.mod.c</in>
       </df>
+      <df name="rht22">
+        <in>rht22.c</in>
+        <in>rht22.h</in>
+        <in>rht22.mod.c</in>
+      </df>
       <df name="sunxi-w1">
         <df name=".tmp_versions">
+          <in>sunxi-w1.mod</in>
         </df>
         <in>sunxi-w1.c</in>
         <in>sunxi-w1.h</in>
+        <in>sunxi-w1.mod.c</in>
         <in>w1.h</in>
         <in>w1_family.h</in>
         <in>w1_int.h</in>

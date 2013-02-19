@@ -1,21 +1,10 @@
-DIRS	= mod-io sunxi-w1 gpio-test
+obj-m	+= rht22/rht22.o
+obj-m	+= sunxi-w1/sunxi-w1.o
+obj-m	+= mod-io/mod-io.o
+obj-m	+= gpio-test/gpio-test.o
 
-all : mod-io/mod-io.o sunxi-w1/sunxi-w1.o gpio-test/gpio-test.o move
+all:
+	make -j4 ARCH=arm CROSS_COMPILE=arm-none-eabi- -C ../kernel/src M=$(PWD) modules
 
-mod-io/mod-io.o : force_look
-	cd mod-io; $(MAKE)
-
-sunxi-w1/sunxi-w1.o : force_look
-	cd sunxi-w1; $(MAKE)
-	
-gpio-test/gpio-test.o : force_look
-	cd gpio-test; $(MAKE)
-	
-move : mod-io/mod-io.o sunxi-w1/sunxi-w1.o gpio-test/gpio-test.o
-	-for d in $(DIRS); do (cd $$d; mv *.ko ../ ); done;
-	
-clean :
-	-for d in $(DIRS); do (cd $$d; $(MAKE) clean ); done; rm *.ko
-	
-force_look :
-	true
+clean:
+	make -j4 ARCH=arm CROSS_COMPILE=arm-none-eabi- -C ../kernel/src M=$(PWD) clean
