@@ -4380,6 +4380,9 @@
       </df>
     </df>
     <df name="k_modules" root=".">
+      <df name="gpio-test">
+        <in>gpio-test.c</in>
+      </df>
       <df name="mod-io">
         <df name=".tmp_versions">
           <in>mod-io.mod</in>

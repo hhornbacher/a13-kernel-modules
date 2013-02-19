@@ -1,6 +1,6 @@
-DIRS	= mod-io sunxi-w1
+DIRS	= mod-io sunxi-w1 gpio-test
 
-all : mod-io/mod-io.o sunxi-w1/sunxi-w1.o move
+all : mod-io/mod-io.o sunxi-w1/sunxi-w1.o gpio-test/gpio-test.o move
 
 mod-io/mod-io.o : force_look
 	cd mod-io; $(MAKE)
@@ -8,8 +8,10 @@ mod-io/mod-io.o : force_look
 sunxi-w1/sunxi-w1.o : force_look
 	cd sunxi-w1; $(MAKE)
 	
-move: mod-io/mod-io.o sunxi-w1/sunxi-w1.o
-	mv mod-io/mod-io.ko ./; mv sunxi-w1/sunxi-w1.ko ./
+gpio-test/gpio-test.o : force_look
+	
+move : mod-io/mod-io.o sunxi-w1/sunxi-w1.o gpio-test/gpio-test.o
+	-for d in $(DIRS); do (cd $$d; mv *.ko ../ ); done;
 	
 clean :
 	-for d in $(DIRS); do (cd $$d; $(MAKE) clean ); done; rm *.ko
