@@ -9,6 +9,7 @@ sunxi-w1/sunxi-w1.o : force_look
 	cd sunxi-w1; $(MAKE)
 	
 gpio-test/gpio-test.o : force_look
+	cd gpio-test; $(MAKE)
 	
 move : mod-io/mod-io.o sunxi-w1/sunxi-w1.o gpio-test/gpio-test.o
 	-for d in $(DIRS); do (cd $$d; mv *.ko ../ ); done;
