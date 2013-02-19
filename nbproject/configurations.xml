@@ -828,7 +828,13 @@
           <in>scalar.h</in>
         </df>
         <df name="leds">
+          <df name="trigger">
+            <df name="default">
+              <in>on.h</in>
+            </df>
+          </df>
           <in>class.h</in>
+          <in>sunxi.h</in>
           <in>triggers.h</in>
         </df>
         <df name="lockdep">
@@ -1113,6 +1119,9 @@
           <in>class.h</in>
           <in>hctosys.h</in>
           <in>lib.h</in>
+        </df>
+        <df name="rtl8192cu">
+          <in>sw.h</in>
         </df>
         <df name="rwsem">
           <df name="generic">
@@ -1613,6 +1622,9 @@
           <in>console.h</in>
         </df>
         <df name="w1">
+          <df name="master">
+            <in>sunxi.h</in>
+          </df>
           <df name="slave">
             <in>therm.h</in>
           </df>
@@ -1626,6 +1638,7 @@
         </df>
         <df name="wext">
           <in>core.h</in>
+          <in>priv.h</in>
           <in>proc.h</in>
         </df>
         <df name="wireless">
@@ -1690,8 +1703,10 @@
         <in>devmem.h</in>
         <in>devtmpfs.h</in>
         <in>dnotify.h</in>
+        <in>embedded.h</in>
         <in>epoll.h</in>
         <in>eventfd.h</in>
+        <in>expert.h</in>
         <in>flatmem.h</in>
         <in>freezer.h</in>
         <in>fscache.h</in>
@@ -4381,12 +4396,8 @@
     </df>
     <df name="k_modules" root=".">
       <df name="gpio-test">
-        <df name=".tmp_versions">
-          <in>gpio-test.mod</in>
-        </df>
         <in>gpio-test.c</in>
         <in>gpio-test.h</in>
-        <in>gpio-test.mod.c</in>
       </df>
       <df name="mod-io">
         <df name=".tmp_versions">
@@ -4398,11 +4409,9 @@
       </df>
       <df name="sunxi-w1">
         <df name=".tmp_versions">
-          <in>sunxi-w1.mod</in>
         </df>
         <in>sunxi-w1.c</in>
         <in>sunxi-w1.h</in>
-        <in>sunxi-w1.mod.c</in>
         <in>w1.h</in>
         <in>w1_family.h</in>
         <in>w1_int.h</in>
@@ -21044,10 +21053,6 @@
             <pElem>../kernel/linux-sunxi-sunxi-3.0/arch/arm/mach-sun5i/include</pElem>
             <pElem>../kernel/linux-sunxi-sunxi-3.0/arch/arm/mach-sun5i/include/mach</pElem>
           </incDir>
-        </cTool>
-      </item>
-      <item path="sunxi-w1/sunxi-w1.mod.c" ex="false" tool="0" flavor2="0">
-        <cTool>
         </cTool>
       </item>
       <item path="sunxi-w1/w1_family.h" ex="true" tool="3" flavor2="0">
