@@ -4473,9 +4473,15 @@
     </df>
     <df name="k_modules" root=".">
       <df name=".tmp_versions">
+        <in>dht22.mod</in>
         <in>gpio-test.mod</in>
         <in>mod-io.mod</in>
         <in>sunxi-w1.mod</in>
+      </df>
+      <df name="dht22">
+        <in>dht22.c</in>
+        <in>dht22.h</in>
+        <in>dht22.mod.c</in>
       </df>
       <df name="gpio-test">
         <df name=".tmp_versions">
@@ -4492,11 +4498,6 @@
         <in>mod-io.c</in>
         <in>mod-io.h</in>
         <in>mod-io.mod.c</in>
-      </df>
-      <df name="rht22">
-        <in>rht22.c</in>
-        <in>rht22.h</in>
-        <in>rht22.mod.c</in>
       </df>
       <df name="sunxi-w1">
         <df name=".tmp_versions">

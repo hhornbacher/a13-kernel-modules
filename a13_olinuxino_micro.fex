@@ -628,7 +628,11 @@ w1_pin = port:PB03<1><default><default><default>
 
 [gpt_para]
 gpt_pin_1 = port:PB03<1><default><default><default>
-gpt_pin_2 = port:PE08<1><default><default><default>
+gpt_pin_2 = port:PE09<1><default><default><default>
+
+[dht22_para]
+dht22_used = 1
+dht22_pin = port:PE08<1><default><default><default>
 
 
 [gpio_para]
