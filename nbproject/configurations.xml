@@ -1254,6 +1254,7 @@
               <in>mem.h</in>
             </df>
           </df>
+          <in>dbgreg.h</in>
         </df>
         <df name="suspend">
           <in>freezer.h</in>
@@ -1352,6 +1353,9 @@
               <in>ohci.h</in>
             </df>
           </df>
+          <df name="cdc">
+            <in>composite.h</in>
+          </df>
           <df name="cypress">
             <in>cy7c63.h</in>
           </df>
@@ -1368,6 +1372,9 @@
               <in>newsched.h</in>
             </df>
             <in>hcd.h</in>
+          </df>
+          <df name="eth">
+            <in>rndis.h</in>
           </df>
           <df name="gadget">
             <df name="vbus">
@@ -1527,6 +1534,7 @@
           <in>an2720.h</in>
           <in>armlinux.h</in>
           <in>belkin.h</in>
+          <in>eth.h</in>
           <in>ezusb.h</in>
           <in>gadget.h</in>
           <in>hid.h</in>
@@ -1603,6 +1611,12 @@
             </df>
           </df>
           <in>console.h</in>
+        </df>
+        <df name="w1">
+          <df name="slave">
+            <in>therm.h</in>
+          </df>
+          <in>con.h</in>
         </df>
         <df name="wakelock">
           <in>stat.h</in>
@@ -1762,6 +1776,7 @@
         <in>vfp.h</in>
         <in>vfpv3.h</in>
         <in>vt.h</in>
+        <in>w1.h</in>
         <in>wakelock.h</in>
         <in>wireless.h</in>
         <in>wlan.h</in>
