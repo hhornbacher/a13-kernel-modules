@@ -1,13 +1,3 @@
-/*
- * w1-gpio - GPIO w1 bus master driver
- *
- * Copyright (C) 2007 Ville Syrjala <syrjala@sci.fi>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2
- * as published by the Free Software Foundation.
- */
-
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/module.h>
@@ -41,18 +31,23 @@ static u8 w1_gpio_read_bit(void *data) {
 }
 
 static int __init w1_gpio_probe(struct platform_device *pdev) {
+    printk(KERN_INFO "%s: BEGIN\n", __FUNCTION__);
     int err = 0;
     int i;
     int w1_used = 0;
     struct w1_bus_master *master;
     struct w1_gpio_platform_data *pdata = pdev->dev.platform_data;
 
-    if (!pdata)
+    if (!pdata) {
+        printk(KERN_INFO "%s: Invalid platform_data!\n", __FUNCTION__);
         return -ENXIO;
+    }
 
     master = kzalloc(sizeof (struct w1_bus_master), GFP_KERNEL);
-    if (!master)
+    if (!master) {
+        printk(KERN_INFO "%s: Not enough memory!\n", __FUNCTION__);
         return -ENOMEM;
+    }
 
     err = script_parser_fetch("w1_para", "w1_used", &w1_used, sizeof (w1_used) / sizeof (int));
     if (!w1_used || err) {
@@ -80,6 +75,7 @@ static int __init w1_gpio_probe(struct platform_device *pdev) {
         gpio_set_one_pin_io_status(gpio_handler, 0, info.gpio_name);
         master->write_bit = w1_gpio_write_bit_dir;
     }
+    gpio_write_one_pin_value(gpio_handler, 1, info.gpio_name);
 
     err = w1_add_master_device(master);
     if (err)
@@ -93,15 +89,16 @@ static int __init w1_gpio_probe(struct platform_device *pdev) {
     return 0;
 
 free_gpio:
+    printk(KERN_INFO "%s: jumped to free_gpio\n", __FUNCTION__);
     gpio_release(gpio_handler, 0);
 free_master:
+    printk(KERN_INFO "%s: jumped to free_master\n", __FUNCTION__);
     kfree(master);
 
     return err;
-    return 0;
-
 
 exit:
+    printk(KERN_INFO "%s: jumped to exit\n", __FUNCTION__);
     return err;
 }
 
@@ -131,6 +128,7 @@ static struct platform_driver w1_gpio_driver = {
 };
 
 static int __init w1_gpio_init(void) {
+    printk(KERN_INFO "%s()...", __FUNCTION__);
     return platform_driver_probe(&w1_gpio_driver, w1_gpio_probe);
 }
 
