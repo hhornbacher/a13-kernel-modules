@@ -631,9 +631,18 @@ gpt_pin_1 = port:PB03<1><default><default><default>
 gpt_pin_2 = port:PE09<1><default><default><default>
 
 [dht22_para]
-dht22_used = 1
+dht22_used = 0
 dht22_pin = port:PE08<1><default><default><default>
 
+[lcd1602_para]
+lcd1602_used = 1
+lcd1602_rs = port:PB03<1>
+lcd1602_rw = port:PE11<1>
+lcd1602_e  = port:PB04<1>
+lcd1602_d4 = port:PE10<1>
+lcd1602_d5 = port:PB10<1>
+lcd1602_d6 = port:PE09<1>
+lcd1602_d7 = port:PE08<1>
 
 [gpio_para]
 gpio_used = 0
