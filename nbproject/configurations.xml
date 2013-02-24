@@ -200,6 +200,9 @@
         <in>xor.h</in>
       </df>
       <df name="config">
+        <df name="ace">
+          <in>config.h</in>
+        </df>
         <df name="alignment">
           <in>trap.h</in>
         </df>
@@ -239,6 +242,9 @@
           </df>
           <in>amba.h</in>
           <in>thumb.h</in>
+        </df>
+        <df name="audio">
+          <in>engine.h</in>
         </df>
         <df name="audit">
           <in>generic.h</in>
@@ -4472,40 +4478,30 @@
       </df>
     </df>
     <df name="k_modules" root=".">
-      <df name=".tmp_versions">
-        <in>dht22.mod</in>
-        <in>gpio-test.mod</in>
-        <in>mod-io.mod</in>
-        <in>sunxi-w1.mod</in>
-      </df>
       <df name="dht22">
         <in>dht22.c</in>
         <in>dht22.h</in>
         <in>dht22.mod.c</in>
       </df>
       <df name="gpio-test">
-        <df name=".tmp_versions">
-          <in>gpio-test.mod</in>
-        </df>
         <in>gpio-test.c</in>
         <in>gpio-test.h</in>
         <in>gpio-test.mod.c</in>
       </df>
+      <df name="lcd1602">
+        <in>lcd1602.c</in>
+        <in>lcd1602.h</in>
+        <in>lcd1602.mod.c</in>
+      </df>
       <df name="mod-io">
-        <df name=".tmp_versions">
-          <in>mod-io.mod</in>
-        </df>
         <in>mod-io.c</in>
         <in>mod-io.h</in>
         <in>mod-io.mod.c</in>
       </df>
-      <df name="sunxi-w1">
-        <df name=".tmp_versions">
-          <in>sunxi-w1.mod</in>
-        </df>
-        <in>sunxi-w1.c</in>
-        <in>sunxi-w1.h</in>
-        <in>sunxi-w1.mod.c</in>
+      <df name="w1-sun5i">
+        <in>w1-sun5i.c</in>
+        <in>w1-sun5i.h</in>
+        <in>w1-sun5i.mod.c</in>
         <in>w1.h</in>
         <in>w1_family.h</in>
         <in>w1_int.h</in>
@@ -21141,17 +21137,9 @@
       </item>
       <item path="mod-io/mod-io.h" ex="true" tool="3" flavor2="0">
       </item>
-      <item path="sunxi-w1/sunxi-w1.c" ex="false" tool="0" flavor2="2">
-        <cTool>
-          <incDir>
-            <pElem>../kernel/linux-sunxi-sunxi-3.0/arch/arm/mach-sun5i/include</pElem>
-            <pElem>../kernel/linux-sunxi-sunxi-3.0/arch/arm/mach-sun5i/include/mach</pElem>
-          </incDir>
-        </cTool>
+      <item path="w1-sun5i/w1_family.h" ex="true" tool="3" flavor2="0">
       </item>
-      <item path="sunxi-w1/w1_family.h" ex="true" tool="3" flavor2="0">
-      </item>
-      <item path="sunxi-w1/w1_int.h" ex="true" tool="3" flavor2="0">
+      <item path="w1-sun5i/w1_int.h" ex="true" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
