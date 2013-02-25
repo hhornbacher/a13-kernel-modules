@@ -75,11 +75,14 @@ static int w1_sun5i_probe_driver(struct platform_device *pdev) {
 }
 
 static int w1_sun5i_remove_driver(struct platform_device *pdev) {
-    struct w1_sun5i_platform_data *pdata = pdev->dev.platform_data;
     printk(KERN_INFO "%s()", __FUNCTION__);
+    struct w1_sun5i_platform_data *pdata = pdev->dev.platform_data;
+    w1_remove_master_device(w1_sun5i_master);
     kfree(w1_sun5i_master);
     gpio_release(pdata->gpio_handler, 0);
     platform_driver_unregister(&w1_sun5i_driver);
+    kfree(w1_sun5i_device->dev.platform_data);
+    platform_device_unregister(w1_sun5i_device);
     return 0;
 }
 
@@ -102,8 +105,6 @@ static int __init w1_sun5i_init_driver(void) {
 
 static void __exit w1_sun5i_exit_driver(void) {
     printk(KERN_INFO "%s()", __FUNCTION__);
-    kfree(w1_sun5i_device->dev.platform_data);
-    platform_device_unregister(w1_sun5i_device);
 }
 
 
