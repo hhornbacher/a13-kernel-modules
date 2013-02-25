@@ -70,7 +70,7 @@ struct w1_slave
 	u32			flags;
 	int			ttl;
 
-	struct w1_master	*master;
+	struct w1_master	*w1_sun5i_master;
 	struct w1_family	*family;
 	void			*family_data;
 	struct device		dev;
@@ -190,7 +190,7 @@ struct w1_master
 };
 
 int w1_create_master_attributes(struct w1_master *);
-void w1_destroy_master_attributes(struct w1_master *master);
+void w1_destroy_master_attributes(struct w1_master *w1_sun5i_master);
 void w1_search(struct w1_master *dev, u8 search_type, w1_slave_found_callback cb);
 void w1_search_devices(struct w1_master *dev, u8 search_type, w1_slave_found_callback cb);
 struct w1_slave *w1_search_slave(struct w1_reg_num *id);
