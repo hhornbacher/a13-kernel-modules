@@ -1,11 +1,12 @@
-/* 
- * File:   w1-sun5i.h
- * Author: hhornbacher
+/*
+ * w1-sun5i - W1 master driver for sun5i devices
  *
- * Created on 23. Februar 2013, 18:36
+ * Copyright (C) 2013 Harry Hornbacher <h.hornbacher@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2
+ * as published by the Free Software Foundation.
  */
-
-
 
 #define DRIVER_AUTHOR   "Harry Hornbacher <h.hornbacher@gmail.com>"
 #define DRIVER_DESC     "W1 driver for sun5i devices"
