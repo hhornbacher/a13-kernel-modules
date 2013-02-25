@@ -23,7 +23,6 @@
 
 
 struct w1_bus_master *w1_sun5i_master = NULL;
-
 static struct platform_device *w1_sun5i_device = NULL;
 static struct platform_driver w1_sun5i_driver = {
     .driver =
@@ -33,6 +32,7 @@ static struct platform_driver w1_sun5i_driver = {
     .remove = w1_sun5i_remove_driver
 };
 
+/* Init driver */
 static int w1_sun5i_probe_driver(struct platform_device *pdev) {
     printk(KERN_INFO "%s()", __FUNCTION__);
     int err = 0;
@@ -84,13 +84,12 @@ static int w1_sun5i_probe_driver(struct platform_device *pdev) {
     return 0;
 }
 
+/*Cleanup*/
 static int w1_sun5i_remove_driver(struct platform_device *pdev) {
-    printk(KERN_INFO "%s()", __FUNCTION__);
     struct w1_sun5i_platform_data *pdata = pdev->dev.platform_data;
     w1_remove_master_device(w1_sun5i_master);
     kfree(w1_sun5i_master);
     gpio_release(pdata->gpio_handler, 0);
-    platform_driver_unregister(&w1_sun5i_driver);
     kfree(w1_sun5i_device->dev.platform_data);
     platform_device_unregister(w1_sun5i_device);
     return 0;
@@ -108,15 +107,15 @@ static u8 w1_sun5i_read_bit(void *data) {
     return PIN_GET(pdata->gpio_handler);
 }
 
+
 static int __init w1_sun5i_init_driver(void) {
-    printk(KERN_INFO "%s()", __FUNCTION__);
     w1_sun5i_device = platform_device_register_simple(DRIVER_NAME, 0, NULL, 0);
     w1_sun5i_device->dev.platform_data = kzalloc(sizeof (struct w1_sun5i_platform_data), GFP_KERNEL);
     return platform_driver_probe(&w1_sun5i_driver, w1_sun5i_probe_driver);
 }
 
 static void __exit w1_sun5i_exit_driver(void) {
-    printk(KERN_INFO "%s()", __FUNCTION__);
+    platform_driver_unregister(&w1_sun5i_driver);
 }
 
 
