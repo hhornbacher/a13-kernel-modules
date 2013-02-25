@@ -88,12 +88,14 @@ static int w1_sun5i_remove_driver(struct platform_device *pdev) {
 
 static void w1_sun5i_write_bit(void *data, u8 bit) {
     struct w1_sun5i_platform_data *pdata = data;
-
+    PIN_DIR(pdata->gpio_handler,1);
+    PIN_SET(pdata->gpio_handler,bit);
 }
 
 static u8 w1_sun5i_read_bit(void *data) {
     struct w1_sun5i_platform_data *pdata = data;
-    return 0;
+    PIN_DIR(pdata->gpio_handler,0);
+    return PIN_GET(pdata->gpio_handler);
 }
 
 static int __init w1_sun5i_init_driver(void) {
