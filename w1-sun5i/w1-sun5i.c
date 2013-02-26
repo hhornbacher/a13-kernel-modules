@@ -1,5 +1,5 @@
 /*
- * w1-sun5i - W1 master driver for sun5i devices
+ * w1-sun5i - W1 master driver for sun5i platform
  *
  * Copyright (C) 2013 Harry Hornbacher <h.hornbacher@gmail.com>
  *

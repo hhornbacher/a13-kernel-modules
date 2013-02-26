@@ -1,5 +1,5 @@
 /*
- * w1-sun5i - W1 master driver for sun5i devices
+ * w1-sun5i - W1 master driver for sun5i platform
  *
  * Copyright (C) 2013 Harry Hornbacher <h.hornbacher@gmail.com>
  *
@@ -9,7 +9,7 @@
  */
 
 #define DRIVER_AUTHOR   "Harry Hornbacher <h.hornbacher@gmail.com>"
-#define DRIVER_DESC     "W1 driver for sun5i devices"
+#define DRIVER_DESC     "W1 driver for sun5i platform"
 #define DRIVER_NAME     "w1-sun5i"
 #define DRV_VERSION     "0.0.1"
 

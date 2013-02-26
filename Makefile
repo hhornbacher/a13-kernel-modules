@@ -1,4 +1,4 @@
-obj-m	+= dht22/dht22.o
+obj-m	+= dht22-sun5i/dht22-sun5i.o
 obj-m	+= mod-io/mod-io.o
 obj-m	+= gpio-test/gpio-test.o
 obj-m	+= w1-sun5i/w1-sun5i.o

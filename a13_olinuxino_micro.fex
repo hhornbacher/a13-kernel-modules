@@ -622,7 +622,7 @@ leds_pin_1 = port:PG09<1><default><default><default>
 leds_name_1 = "LED1"
 
 [w1_para]
-w1_used = 1
+w1_used = 0
 w1_pin = port:PB03<1><default><default><default>
 
 
@@ -631,8 +631,8 @@ gpt_pin_1 = port:PB03<1><default><default><default>
 gpt_pin_2 = port:PE09<1><default><default><default>
 
 [dht22_para]
-dht22_used = 0
-dht22_pin = port:PE08<1><default><default><default>
+dht22_used = 1
+dht22_pin = port:PB03<1><default><default><default>
 
 [lcd1602_para]
 lcd1602_used = 0
