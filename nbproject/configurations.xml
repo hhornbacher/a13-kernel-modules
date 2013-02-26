@@ -4480,20 +4480,12 @@
     <df name="k_modules" root=".">
       <df name=".tmp_versions">
         <in>dht22-sun5i.mod</in>
-        <in>gpio-test.mod</in>
-        <in>lcd1602.mod</in>
         <in>mod-io.mod</in>
-        <in>w1-sun5i.mod</in>
       </df>
       <df name="dht22-sun5i">
         <in>dht22-sun5i.c</in>
         <in>dht22-sun5i.h</in>
         <in>dht22-sun5i.mod.c</in>
-      </df>
-      <df name="gpio-test">
-        <in>gpio-test.c</in>
-        <in>gpio-test.h</in>
-        <in>gpio-test.mod.c</in>
       </df>
       <df name="keypad-sun5i">
         <in>keypad-sun5i.c</in>

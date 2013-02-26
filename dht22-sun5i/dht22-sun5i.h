@@ -14,17 +14,11 @@
 #define DRV_VERSION     "0.0.1"
 
 
-#define PIN_DIR(handler,dir)    gpio_set_one_pin_io_status(handler, dir, NULL);
-#define PIN_SET(handler,val)    gpio_write_one_pin_value(handler, val, NULL);
-#define PIN_GET(handler)        gpio_read_one_pin_value(handler, NULL);
+#define PIN_DIR(dir)    gpio_set_one_pin_io_status(dht22_sun5i_gpio_handler, dir, NULL);
+#define PIN_SET(val)    gpio_write_one_pin_value(dht22_sun5i_gpio_handler, val, NULL);
+#define PIN_GET()        gpio_read_one_pin_value(dht22_sun5i_gpio_handler, NULL);
 #define PIN_DIR_OUT                 1
 #define PIN_DIR_IN                  0
-
-struct dht22_sun5i_platform_data {
-    unsigned gpio_handler;
-    script_gpio_set_t info;
-    int direction;
-};
 
 struct dht22_sun5i_sensor_data {
     u8 rh_i, rh_d;
@@ -33,11 +27,11 @@ struct dht22_sun5i_sensor_data {
     int valid;
 };
 
-static int dht22_sun5i_remove_driver(struct platform_device *pdev);
-static int dht22_sun5i_probe_driver(struct platform_device *pdev);
+static int dht22_sun5i_remove_driver();
+static int dht22_sun5i_probe_driver();
 
 
-static void dht22_sun5i_write_bit(struct dht22_sun5i_platform_data *data, u8 bit);
-static u8 dht22_sun5i_read_bit(struct dht22_sun5i_platform_data *data);
+static void dht22_sun5i_write_bit(u8 bit);
+static u8 dht22_sun5i_read_bit();
 
-static int dht22_sun5i_sensor_read(struct dht22_sun5i_platform_data *pdata);
+static int dht22_sun5i_sensor_read();

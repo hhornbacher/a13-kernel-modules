@@ -12,7 +12,8 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/slab.h>
-#include <linux/platform_device.h>
+#include <linux/proc_fs.h>
+#include <asm/uaccess.h> 
 
 #include <linux/timer.h>
 
@@ -22,26 +23,26 @@
 
 #include "dht22-sun5i.h"
 
-static struct platform_device *dht22_sun5i_device = NULL;
-static struct platform_driver dht22_sun5i_driver = {
-    .driver =
-    {
-        .name = DRIVER_NAME,
-    },
-    .remove = dht22_sun5i_remove_driver
-};
+static struct proc_dir_entry *dht22_sun5i_proc;
+static unsigned *dht22_sun5i_gpio_handler;
+static int dht22_sun5i_gpio_direction;
+static struct dht22_sun5i_sensor_data dht22_sun5i_data;
+
+static int dht22_sun5i_proc_read(char* buffer, char** start, off_t off, int count, int* peof, void* data) {
+    if(dht22_sun5i_sensor_read()==0)
+        return sprintf(buffer, "rhi=%d\nrh_d=%d\ntp_i=%d\ntp_d=%d\nchecksum=%d", dht22_sun5i_data.rh_i, dht22_sun5i_data.rh_d, dht22_sun5i_data.tp_i, dht22_sun5i_data.tp_d, dht22_sun5i_data.checksum);
+    else
+        return sprintf(buffer, "N/A");
+}
 
 /* Init driver */
-static int dht22_sun5i_probe_driver(struct platform_device *pdev) {
-    printk(KERN_INFO "%s()", __FUNCTION__);
+static int __init dht22_sun5i_init_driver() {
     int err = 0;
     int dht22_used = 0;
-    struct dht22_sun5i_platform_data *pdata = pdev->dev.platform_data;
+    script_gpio_set_t info;
 
-    if (!pdata) {
-        printk(KERN_INFO "%s: Invalid platform_data!\n", __FUNCTION__);
-        return -ENXIO;
-    }
+    dht22_sun5i_proc = proc_mkdir("dht22", NULL);
+    create_proc_read_entry("raw_data", 0444, dht22_sun5i_proc, dht22_sun5i_proc_read, NULL);
 
     err = script_parser_fetch("dht22_para", "dht22_used", &dht22_used, sizeof (dht22_used) / sizeof (int));
     if (!dht22_used || err) {
@@ -49,46 +50,43 @@ static int dht22_sun5i_probe_driver(struct platform_device *pdev) {
         return -EINVAL;
     }
 
-    err = script_parser_fetch("dht22_para", "dht22_pin", (int *) &pdata->info, sizeof (script_gpio_set_t));
+    err = script_parser_fetch("dht22_para", "dht22_pin", (int *) &info, sizeof (script_gpio_set_t));
     if (err) {
         printk(KERN_INFO "%s: can not get \"dht22_para\" \"dht22_pin\" gpio handler, already used by others?", __FUNCTION__);
         return -EBUSY;
     }
-    pdata->gpio_handler = gpio_request_ex("dht22_para", "dht22_pin");
-    pdata->direction = PIN_DIR_OUT;
-    PIN_DIR(pdata->gpio_handler, PIN_DIR_OUT);
-
-    return dht22_sun5i_sensor_read(pdata);
+    dht22_sun5i_gpio_handler = gpio_request_ex("dht22_para", "dht22_pin");
+    dht22_sun5i_gpio_direction = PIN_DIR_OUT;
+    PIN_DIR(PIN_DIR_OUT);
 
     return 0;
 }
 
 /*Cleanup*/
-static int dht22_sun5i_remove_driver(struct platform_device *pdev) {
-    struct dht22_sun5i_platform_data *pdata = pdev->dev.platform_data;
-    gpio_release(pdata->gpio_handler, 0);
-    kfree(dht22_sun5i_device->dev.platform_data);
-    platform_device_unregister(dht22_sun5i_device);
+static int dht22_sun5i_exit_driver() {
+    remove_proc_entry("raw_data", dht22_sun5i_proc);
+    remove_proc_entry("dht22", NULL);
+    gpio_release(dht22_sun5i_gpio_handler, 0);
     return 0;
 }
 
-static int dht22_sun5i_sensor_read(struct dht22_sun5i_platform_data *pdata) {
+static int dht22_sun5i_sensor_read() {
     int state = 0;
     struct timeval end, start;
     long diff;
     int bits[40], i;
 
     // Init host
-    dht22_sun5i_write_bit(pdata, 0);
+    dht22_sun5i_write_bit(0);
     udelay(500);
-    dht22_sun5i_write_bit(pdata, 1);
+    dht22_sun5i_write_bit(1);
     udelay(25);
 
     // Init sensor
     // Read data (low 80 us)
     do_gettimeofday(&start);
     while (state == 0) {
-        state = dht22_sun5i_read_bit(pdata);
+        state = dht22_sun5i_read_bit();
     }
     do_gettimeofday(&end);
     diff = end.tv_usec - start.tv_usec;
@@ -99,7 +97,7 @@ static int dht22_sun5i_sensor_read(struct dht22_sun5i_platform_data *pdata) {
     }
     // Read data (high 80 us)
     while (state == 1) {
-        state = dht22_sun5i_read_bit(pdata);
+        state = dht22_sun5i_read_bit();
     }
     do_gettimeofday(&end);
     diff = end.tv_usec - start.tv_usec;
@@ -111,7 +109,7 @@ static int dht22_sun5i_sensor_read(struct dht22_sun5i_platform_data *pdata) {
 
     for (i = 0; i < 40; i++) {
         while (state == 0) {
-            state = dht22_sun5i_read_bit(pdata);
+            state = dht22_sun5i_read_bit();
         }
         do_gettimeofday(&end);
         diff = end.tv_usec - start.tv_usec;
@@ -121,7 +119,7 @@ static int dht22_sun5i_sensor_read(struct dht22_sun5i_platform_data *pdata) {
             return -1;
         }
         while (state == 1) {
-            state = dht22_sun5i_read_bit(pdata);
+            state = dht22_sun5i_read_bit();
         }
         do_gettimeofday(&end);
         diff = end.tv_usec - start.tv_usec;
@@ -135,48 +133,33 @@ static int dht22_sun5i_sensor_read(struct dht22_sun5i_platform_data *pdata) {
             return -1;
         }
     }
-    struct dht22_sun5i_sensor_data data;
-    data.rh_i = (bits[7]) | (bits[6] << 1) | (bits[5] << 2) | (bits[4] << 3) | (bits[3] << 4) | (bits[2] << 5) | (bits[1] << 6) | (bits[0] << 7);
-    data.rh_d = (bits[15]) | (bits[14] << 1) | (bits[13] << 2) | (bits[12] << 3) | (bits[11] << 4) | (bits[10] << 5) | (bits[9] << 6) | (bits[8] << 7);
-    data.tp_i = (bits[23]) | (bits[22] << 1) | (bits[21] << 2) | (bits[20] << 3) | (bits[19] << 4) | (bits[18] << 5) | (bits[17] << 6) | (bits[16] << 7);
-    data.tp_d = (bits[31]) | (bits[30] << 1) | (bits[29] << 2) | (bits[28] << 3) | (bits[27] << 4) | (bits[26] << 5) | (bits[25] << 6) | (bits[24] << 7);
-    data.checksum = (bits[39]) | (bits[38] << 1) | (bits[37] << 2) | (bits[36] << 3) | (bits[35] << 4) | (bits[34] << 5) | (bits[33] << 6) | (bits[32] << 7);
-    data.valid = 0;
-    if ((data.checksum == ((data.rh_i + data.rh_d + data.tp_i + data.tp_d) & 0xFF))) {
-        data.valid = 1;
+    dht22_sun5i_data.rh_i = (bits[7]) | (bits[6] << 1) | (bits[5] << 2) | (bits[4] << 3) | (bits[3] << 4) | (bits[2] << 5) | (bits[1] << 6) | (bits[0] << 7);
+    dht22_sun5i_data.rh_d = (bits[15]) | (bits[14] << 1) | (bits[13] << 2) | (bits[12] << 3) | (bits[11] << 4) | (bits[10] << 5) | (bits[9] << 6) | (bits[8] << 7);
+    dht22_sun5i_data.tp_i = (bits[23]) | (bits[22] << 1) | (bits[21] << 2) | (bits[20] << 3) | (bits[19] << 4) | (bits[18] << 5) | (bits[17] << 6) | (bits[16] << 7);
+    dht22_sun5i_data.tp_d = (bits[31]) | (bits[30] << 1) | (bits[29] << 2) | (bits[28] << 3) | (bits[27] << 4) | (bits[26] << 5) | (bits[25] << 6) | (bits[24] << 7);
+    dht22_sun5i_data.checksum = (bits[39]) | (bits[38] << 1) | (bits[37] << 2) | (bits[36] << 3) | (bits[35] << 4) | (bits[34] << 5) | (bits[33] << 6) | (bits[32] << 7);
+    dht22_sun5i_data.valid = 0;
+    if ((dht22_sun5i_data.checksum == ((dht22_sun5i_data.rh_i + dht22_sun5i_data.rh_d + dht22_sun5i_data.tp_i + dht22_sun5i_data.tp_d) & 0xFF))) {
+        dht22_sun5i_data.valid = 1;
     }
-    
-    printk(KERN_INFO "data: rh_i=%d, rh_d=%d, tp_i=%d, tp_d=%d, checksum=0x%x, valid=%d", data.rh_i, data.rh_d, data.tp_i, data.tp_d, data.checksum, data.valid);
-
-    
     return 0;
 }
 
-static void dht22_sun5i_write_bit(struct dht22_sun5i_platform_data *pdata, u8 bit) {
-    if (pdata->direction != PIN_DIR_OUT) {
-        pdata->direction = PIN_DIR_OUT;
-        PIN_DIR(pdata->gpio_handler, PIN_DIR_OUT);
+static void dht22_sun5i_write_bit(u8 bit) {
+    if (dht22_sun5i_gpio_direction != PIN_DIR_OUT) {
+        dht22_sun5i_gpio_direction = PIN_DIR_OUT;
+        PIN_DIR(PIN_DIR_OUT);
     }
-    PIN_SET(pdata->gpio_handler, bit);
+    PIN_SET(bit);
 }
 
-static u8 dht22_sun5i_read_bit(struct dht22_sun5i_platform_data *pdata) {
-    if (pdata->direction != PIN_DIR_IN) {
-        pdata->direction = PIN_DIR_IN;
-        PIN_DIR(pdata->gpio_handler, PIN_DIR_IN);
+static u8 dht22_sun5i_read_bit() {
+    if (dht22_sun5i_gpio_direction != PIN_DIR_IN) {
+        dht22_sun5i_gpio_direction = PIN_DIR_IN;
+        PIN_DIR(PIN_DIR_IN);
     }
-    PIN_DIR(pdata->gpio_handler, 0);
-    return PIN_GET(pdata->gpio_handler);
-}
-
-static int __init dht22_sun5i_init_driver(void) {
-    dht22_sun5i_device = platform_device_register_simple(DRIVER_NAME, 0, NULL, 0);
-    dht22_sun5i_device->dev.platform_data = kzalloc(sizeof (struct dht22_sun5i_platform_data), GFP_KERNEL);
-    return platform_driver_probe(&dht22_sun5i_driver, dht22_sun5i_probe_driver);
-}
-
-static void __exit dht22_sun5i_exit_driver(void) {
-    platform_driver_unregister(&dht22_sun5i_driver);
+    PIN_DIR(0);
+    return PIN_GET();
 }
 
 
