@@ -375,12 +375,12 @@ key_min = 4
 key_max = 6
 
 [w1_para]
-w1_used = 0
+w1_used = 1
 w1_pin = port:PB03<1><default><default><default>
 
 [dht22_para]
 dht22_used = 1
-dht22_pin = port:PB03<1><default><default><default>
+dht22_pin = port:PE11<1><default><default><default>
 
 [lcd1602_para]
 lcd1602_used = 0

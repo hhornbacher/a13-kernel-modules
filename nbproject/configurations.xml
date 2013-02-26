@@ -4480,7 +4480,9 @@
     <df name="k_modules" root=".">
       <df name=".tmp_versions">
         <in>dht22-sun5i.mod</in>
+        <in>lcd1602.mod</in>
         <in>mod-io.mod</in>
+        <in>w1-sun5i.mod</in>
       </df>
       <df name="dht22-sun5i">
         <in>dht22-sun5i.c</in>

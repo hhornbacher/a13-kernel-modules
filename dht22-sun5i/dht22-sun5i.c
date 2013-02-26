@@ -16,6 +16,7 @@
 #include <asm/uaccess.h> 
 
 #include <linux/timer.h>
+#include <linux/delay.h>
 
 #include <asm/delay.h>
 
@@ -30,7 +31,7 @@ static struct dht22_sun5i_sensor_data dht22_sun5i_data;
 
 static int dht22_sun5i_proc_read(char* buffer, char** start, off_t off, int count, int* peof, void* data) {
     if(dht22_sun5i_sensor_read()==0)
-        return sprintf(buffer, "rhi=%d\nrh_d=%d\ntp_i=%d\ntp_d=%d\nchecksum=%d", dht22_sun5i_data.rh_i, dht22_sun5i_data.rh_d, dht22_sun5i_data.tp_i, dht22_sun5i_data.tp_d, dht22_sun5i_data.checksum);
+        return sprintf(buffer, "rh_i=%d\nrh_d=%d\ntp_i=%d\ntp_d=%d\nchecksum=%d\n", dht22_sun5i_data.rh_i, dht22_sun5i_data.rh_d, dht22_sun5i_data.tp_i, dht22_sun5i_data.tp_d, dht22_sun5i_data.checksum);
     else
         return sprintf(buffer, "N/A");
 }
@@ -77,8 +78,10 @@ static int dht22_sun5i_sensor_read() {
     int bits[40], i;
 
     // Init host
+    dht22_sun5i_write_bit(1);
+    mdelay(200);
     dht22_sun5i_write_bit(0);
-    udelay(500);
+    udelay(520);
     dht22_sun5i_write_bit(1);
     udelay(25);
 
@@ -91,7 +94,7 @@ static int dht22_sun5i_sensor_read() {
     do_gettimeofday(&end);
     diff = end.tv_usec - start.tv_usec;
     do_gettimeofday(&start);
-    if (diff < 65) {
+    if (diff < 59) {
         printk(KERN_INFO "1, diff=%d", diff);
         return -1;
     }
@@ -124,9 +127,9 @@ static int dht22_sun5i_sensor_read() {
         do_gettimeofday(&end);
         diff = end.tv_usec - start.tv_usec;
         do_gettimeofday(&start);
-        if (diff >= 24 && diff <= 28)
+        if (diff >= 23 && diff <= 32)
             bits[i] = 0;
-        else if (diff >= 66 && diff <= 80)
+        else if (diff >= 63 && diff <= 80)
             bits[i] = 1;
         else {
             printk(KERN_INFO "#%d: 2, diff=%d", i, diff);
