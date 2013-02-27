@@ -20,6 +20,7 @@
 #include "w1_int.h"
 
 #include "w1-sun5i.h"
+#include "../gpio_makros.h"
 
 
 struct w1_bus_master *w1_sun5i_master = NULL;

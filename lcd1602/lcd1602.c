@@ -14,114 +14,160 @@
 #include <mach/sys_config.h>
 
 #include "lcd1602.h"
+#include "../gpio_makros.h"
 
 static struct lcd1602_data *my_lcd_data;
 
+inline void lcd_mode_read() {
+    PIN_SET(my_lcd_data->pin_rw, 1);
+    PIN_DIR(my_lcd_data->pin_d4, PIN_DIR_IN);
+    PIN_DIR(my_lcd_data->pin_d5, PIN_DIR_IN);
+    PIN_DIR(my_lcd_data->pin_d6, PIN_DIR_IN);
+    PIN_DIR(my_lcd_data->pin_d7, PIN_DIR_IN);
+}
+
+inline void lcd_mode_write() {
+    PIN_SET(my_lcd_data->pin_rw, 0);
+    PIN_DIR(my_lcd_data->pin_d4, PIN_DIR_OUT);
+    PIN_DIR(my_lcd_data->pin_d5, PIN_DIR_OUT);
+    PIN_DIR(my_lcd_data->pin_d6, PIN_DIR_OUT);
+    PIN_DIR(my_lcd_data->pin_d7, PIN_DIR_OUT);
+}
+
+inline void lcd_mode_data() {
+    PIN_SET(my_lcd_data->pin_rs, 1);
+}
+
+inline void lcd_mode_command() {
+    PIN_SET(my_lcd_data->pin_rs, 0);
+}
+
 static void lcd_set_data(unsigned char data) {
     if (data & 1) {
-        PIN_SET(my_lcd_data->data[0], 1);
+        PIN_SET(my_lcd_data->pin_d4, 1);
     } else {
-        PIN_SET(my_lcd_data->data[0], 0);
+        PIN_SET(my_lcd_data->pin_d4, 0);
     }
 
     if (data & 2) {
-        PIN_SET(my_lcd_data->data[1], 1);
+        PIN_SET(my_lcd_data->pin_d5, 1);
     } else {
-        PIN_SET(my_lcd_data->data[1], 0);
+        PIN_SET(my_lcd_data->pin_d5, 0);
     }
 
     if (data & 4) {
-        PIN_SET(my_lcd_data->data[2], 1);
+        PIN_SET(my_lcd_data->pin_d6, 1);
     } else {
-        PIN_SET(my_lcd_data->data[2], 0);
+        PIN_SET(my_lcd_data->pin_d6, 0);
     }
 
     if (data & 8) {
-        PIN_SET(my_lcd_data->data[3], 1);
+        PIN_SET(my_lcd_data->pin_d7, 1);
     } else {
-        PIN_SET(my_lcd_data->data[3], 0);
+        PIN_SET(my_lcd_data->pin_d7, 0);
     }
 }
 
-static void lcd_strobe() {
+inline void lcd_strobe(int wait_us) {
     PIN_SET(my_lcd_data->pin_e, 1);
-    udelay(LCD_STROBE_DELAY);
+
+    if (wait_us < 1000)
+        udelay(wait_us);
+    else
+        mdelay(wait_us / 1000);
     PIN_SET(my_lcd_data->pin_e, 0);
 }
 
-void lcd_wait_busy() {
-    PIN_SET(my_lcd_data->pin_rw, 1);
-    PIN_SET(my_lcd_data->pin_rs, 0);
-
-    //D7 =Eingang
-    PIN_DIR(my_lcd_data->data[3], 0);
-    int busy;
-    do {
-        PIN_SET(my_lcd_data->pin_e, 1);
-    udelay(LCD_STROBE_DELAY);
-        busy = PIN_GET(my_lcd_data->data[3]);
-        PIN_SET(my_lcd_data->pin_e, 0);
-
-        lcd_strobe();
-    } while (busy);
-
-    //D7 = Ausgang
-    PIN_DIR(my_lcd_data->data[3], 1);
+static void lcd_wait_busy() {
+    printk(KERN_INFO "%s()", __FUNCTION__);
+    udelay(30);
+    lcd_mode_read();
+    lcd_mode_command();
+    lcd_strobe(2);
+    int loop = 1;
+    while (loop == 1) {
+        loop = PIN_GET(my_lcd_data->pin_d7);
+        lcd_strobe(2);
+    }
 }
 
 static void lcd_send_nibble(unsigned char nibble) {
+    printk(KERN_INFO "%s()", __FUNCTION__);
     lcd_set_data(nibble);
-    lcd_strobe();
+    lcd_strobe(2);
 }
 
 static void lcd_send_byte(unsigned char data) {
+    printk(KERN_INFO "%s()", __FUNCTION__);
     lcd_send_nibble(data >> 4);
     lcd_send_nibble(data);
+    lcd_wait_busy();
 }
 
-static void lcd_send_command(unsigned char cmd) {
+static void lcd_send_command(u8 cmd) {
+    printk(KERN_INFO "%s()", __FUNCTION__);
     lcd_wait_busy();
 
-    PIN_SET(my_lcd_data->pin_rw, 0);
-    PIN_SET(my_lcd_data->pin_rs, 0);
+    lcd_mode_write();
+    lcd_mode_command();
     lcd_send_byte(cmd);
 }
 
-static void lcd_send_data(unsigned char cmd) {
+static void lcd_send_data(u8 data) {
+    printk(KERN_INFO "%s()", __FUNCTION__);
     lcd_wait_busy();
 
-    PIN_SET(my_lcd_data->pin_rw, 0);
-    PIN_SET(my_lcd_data->pin_rs, 1);
-    lcd_send_byte(cmd);
+    lcd_mode_write();
+    lcd_mode_data();
+    lcd_send_byte(data);
 }
 
-void lcd_print(char* string) {
-	while(*string) {
-		lcd_send_data(*string);
-		string++;
+inline void lcd_clear() {
+    printk(KERN_INFO "%s()", __FUNCTION__);
+    lcd_send_command(1);
+}
+
+inline void lcd_home() {
+    printk(KERN_INFO "%s()", __FUNCTION__);
+    lcd_send_command(2);
+}
+
+inline void lcd_entry_mode(u8 inc, u8 shift) {
+    printk(KERN_INFO "%s()", __FUNCTION__);
+    lcd_send_command(4&(inc<<1)&shift);
+}
+
+/*
+inline void lcd_set_ddram(u8 addr) {
+    printk(KERN_INFO "%s()", __FUNCTION__);
+    lcd_send_command(128&addr);
+}
+*/
+
+static void lcd_write_str(char *str) {
+	while(*str) {
+		lcd_send_data(*str);
+		str++;
 	}
 }
 
 static void lcd_init() {
-    mdelay(LCD_INIT_DELAY);
+    printk(KERN_INFO "%s()", __FUNCTION__);
+    
+    // Init
+    PIN_SET(my_lcd_data->pin_d4, 1);
+    PIN_SET(my_lcd_data->pin_d5, 1);
+    lcd_strobe(4000);
+    lcd_strobe(100);
+    lcd_strobe(100);
+    
+    lcd_wait_busy();
+    
+    lcd_clear();
+    lcd_send_command(FUNCTION_SET | BIT_N); // 2 lines, 5x7 chars
+    lcd_send_command(CMD_ONOFF | BIT_D); // Display off
+    lcd_entry_mode(1,0);
 
-    PIN_SET(my_lcd_data->pin_e, 0);
-    PIN_SET(my_lcd_data->pin_rw, 0);
-    PIN_SET(my_lcd_data->pin_rs, 0);
-
-    lcd_send_nibble(0x2); //4-Bit Mode (DL=0)
-    mdelay(10);
-
-
-    unsigned char cmd = 32;
-    cmd |= 8;
-
-    lcd_send_command(cmd); // 4-Bit Modus, Zeilen und Font setzen
-    mdelay(10);
-    //Display On/Off: 0 0 0 0 1 D C B
-    lcd_send_command(0xC); //Display on, no cursor, no blink
-    //Clear Display: 0 0 0 0 0 0 1
-    lcd_send_command(0x1); //Clear Display and Cursor home
 }
 
 static int __init lcd1602_init_driver(void) {
@@ -140,18 +186,35 @@ static int __init lcd1602_init_driver(void) {
     my_lcd_data->pin_rw = gpio_request_ex("lcd1602_para", "lcd1602_rw");
     my_lcd_data->pin_rs = gpio_request_ex("lcd1602_para", "lcd1602_rs");
     my_lcd_data->pin_e = gpio_request_ex("lcd1602_para", "lcd1602_e");
-    for (i = 0; i < 4; i++) {
-        sprintf(buffer, "lcd1602_d%d", (i + 4));
-        my_lcd_data->data[i] = gpio_request_ex("lcd1602_para", buffer);
+    my_lcd_data->pin_d4 = gpio_request_ex("lcd1602_para", "lcd1602_d4");
+    my_lcd_data->pin_d5 = gpio_request_ex("lcd1602_para", "lcd1602_d5");
+    my_lcd_data->pin_d6 = gpio_request_ex("lcd1602_para", "lcd1602_d6");
+    my_lcd_data->pin_d7 = gpio_request_ex("lcd1602_para", "lcd1602_d7");
+    if (!my_lcd_data->pin_rw || !my_lcd_data->pin_rs || !my_lcd_data->pin_e || !my_lcd_data->pin_d4 || !my_lcd_data->pin_d5 || !my_lcd_data->pin_d6 || !my_lcd_data->pin_d7) {
+        printk(KERN_INFO "%s: can not get all needed GPIO pins, maybe already used by others?", __FUNCTION__);
+        return -1;
     }
-    /*
-        if (!gpio_handler || err) {
-            printk(KERN_INFO "%s: can not get \"dht22_para\" \"dht22_pin\" gpio handler, already used by others?", __FUNCTION__);
-        
-        }
-     */
+
+    PIN_DIR(my_lcd_data->pin_rw, PIN_DIR_OUT);
+    PIN_DIR(my_lcd_data->pin_rs, PIN_DIR_OUT);
+    PIN_DIR(my_lcd_data->pin_e, PIN_DIR_OUT);
+    PIN_DIR(my_lcd_data->pin_d4, PIN_DIR_OUT);
+    PIN_DIR(my_lcd_data->pin_d5, PIN_DIR_OUT);
+    PIN_DIR(my_lcd_data->pin_d6, PIN_DIR_OUT);
+    PIN_DIR(my_lcd_data->pin_d7, PIN_DIR_OUT);
+
+    PIN_SET(my_lcd_data->pin_rw, 0);
+    PIN_SET(my_lcd_data->pin_rs, 0);
+    PIN_SET(my_lcd_data->pin_e, 0);
+    PIN_SET(my_lcd_data->pin_d4, 0);
+    PIN_SET(my_lcd_data->pin_d5, 0);
+    PIN_SET(my_lcd_data->pin_d6, 0);
+    PIN_SET(my_lcd_data->pin_d7, 0);
+
     lcd_init();
-    lcd_print("Hallo Welt!");
+    
+    
+    lcd_write_str("Hallo Welt!");
 
     printk(KERN_INFO "%s: Loaded lcd1602 driver\n", __func__);
     return 0;

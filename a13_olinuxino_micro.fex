@@ -383,7 +383,7 @@ dht22_used = 1
 dht22_pin = port:PE11<1><default><default><default>
 
 [lcd1602_para]
-lcd1602_used = 0
+lcd1602_used = 1
 lcd1602_rs = port:PB03<1>
 lcd1602_rw = port:PE11<1>
 lcd1602_e  = port:PB04<1>

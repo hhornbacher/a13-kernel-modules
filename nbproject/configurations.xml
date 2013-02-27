@@ -4511,6 +4511,7 @@
         <in>w1_family.h</in>
         <in>w1_int.h</in>
       </df>
+      <in>gpio_makros.h</in>
     </df>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

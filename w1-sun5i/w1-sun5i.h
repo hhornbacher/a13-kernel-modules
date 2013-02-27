@@ -13,11 +13,6 @@
 #define DRIVER_NAME     "w1-sun5i"
 #define DRV_VERSION     "0.0.1"
 
-
-#define PIN_DIR(handler,dir) gpio_set_one_pin_io_status(handler, dir, NULL);
-#define PIN_SET(handler,val) gpio_write_one_pin_value(handler, val, NULL);
-#define PIN_GET(handler) gpio_read_one_pin_value(handler, NULL);
-
 struct w1_sun5i_platform_data {
     unsigned gpio_handler;
     script_gpio_set_t info;
